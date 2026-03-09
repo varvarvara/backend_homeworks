@@ -9,7 +9,7 @@ from sqlalchemy import String, DateTime, Boolean, Enum as SqlEnum
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-DATABASE_URL="postgresql+asyncpg://varvara_murashova:my_strong_password_123@localhost:5432/tasks_db"
+DATABASE_URL=load_dotenv("DATABASE_URL")
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 
