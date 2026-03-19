@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 task_manager.db
+
+.env
