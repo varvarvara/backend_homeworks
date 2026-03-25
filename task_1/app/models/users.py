@@ -5,8 +5,9 @@ from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
-from app.models.tasks import Task
 
+if TYPE_CHECKING:
+    from app.models.tasks import Task
 
 class User(Base):
     __tablename__ = "users"

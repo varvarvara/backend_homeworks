@@ -1,11 +1,16 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends
 
+from app.core.auth import get_current_user
+from app.core.exceptions import TaskNotFoundException
 from app.schemas.tasks import TaskCreate, TaskResponse, TaskUpdate
 from app.services.tasks import TaskService
-from app.core.db import SessionLocal
 
 task_service = TaskService()
-taskRouter = APIRouter(prefix="/tasks", tags=["Tasks"])
+taskRouter = APIRouter(
+    prefix="/tasks",
+    tags=["Tasks"],
+    dependencies=[Depends(get_current_user)],
+)
 
 @taskRouter.get("", response_model=list[TaskResponse], status_code=200)
 async def get_tasks():
@@ -20,22 +25,22 @@ async def create_task(payload: TaskCreate):
 @taskRouter.get("/{task_id}", response_model=TaskResponse, status_code=200)
 async def get_task(task_id: int):
     task = await task_service.get_task(task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+    if task is None:
+        raise TaskNotFoundException(task_id)
     return task
 
 
 @taskRouter.put("/{task_id}", response_model=TaskResponse, status_code=200)
 async def update_task(task_id: int, payload: TaskUpdate):
     task = await task_service.update_task(task_id, payload)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+    if task is None:
+        raise TaskNotFoundException(task_id)
     return task
 
 
 @taskRouter.delete("/{task_id}", status_code=204)
 async def delete_task(task_id: int):
     deleted = await task_service.delete_task(task_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="Task not found")
+    if deleted is False:
+        raise TaskNotFoundException(task_id)
     return

@@ -3,14 +3,12 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from app.core import config
-
+from app.core.config import settings
 
 class Base(DeclarativeBase):
     pass
 
-
-engine = create_async_engine(config.DATABASE_URL, echo=False)
+engine = create_async_engine(settings.DATABASE_URL, echo=False)
 SessionLocal = async_sessionmaker(
     bind=engine,
     class_=AsyncSession,
@@ -18,15 +16,12 @@ SessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
-
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with SessionLocal() as session:
         yield session
 
-
 async def create_tables() -> None:
-    # Import models so SQLAlchemy registers all tables in Base.metadata.
-    from app.models import tasks, users  # noqa: F401
+    from app.models import Comment, Task, User
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

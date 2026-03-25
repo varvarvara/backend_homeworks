@@ -11,6 +11,7 @@ class ErrorCode(Enum):
     INVALID_TOKEN = "INVALID_TOKEN"
 
     TASK_NOT_FOUND = "TASK_NOT_FOUND"
+    COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND"
     FORBIDDEN_TASK_ACCESS = "FORBIDDEN_TASK_ACCESS"
 
     VALIDATION_ERROR = "VALIDATION_ERROR"
@@ -102,4 +103,14 @@ class ForbiddenTaskAccessException(AppException):
             error_code=ErrorCode.FORBIDDEN_TASK_ACCESS,
             message=f"Нет доступа к задаче id={task_id}",
             details={"task_id": task_id},
+        )
+
+
+class CommentNotFoundException(AppException):
+    def __init__(self, comment_id: int):
+        super().__init__(
+            status_code=404,
+            error_code=ErrorCode.COMMENT_NOT_FOUND,
+            message=f"Комментарий с id={comment_id} не найден",
+            details={"comment_id": comment_id},
         )

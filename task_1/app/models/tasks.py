@@ -6,7 +6,10 @@ from sqlalchemy import Boolean, DateTime, Enum as SqlEnum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
-from app.models.users import User
+
+if TYPE_CHECKING:
+    from app.models.comments import Comment
+    from app.models.users import User
 
 class TaskPriority(str, Enum):
     low = "low"
@@ -38,3 +41,7 @@ class Task(Base):
 
     owner_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     owner: Mapped[Optional["User"]] = relationship(back_populates="tasks")
+    comments: Mapped[list["Comment"]] = relationship(
+        back_populates="task",
+        cascade="all, delete-orphan",
+    )
