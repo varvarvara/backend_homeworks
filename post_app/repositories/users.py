@@ -2,8 +2,6 @@ from fastapi import Depends
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-
 from core.database import get_db
 from core.security import hash_password
 from schemas import UserRegistrationSchema

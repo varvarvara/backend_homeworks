@@ -1,7 +1,14 @@
 import asyncio
-import pytest
 from datetime import datetime, timezone
+from pathlib import Path
+import sys
+
+import pytest
 from fastapi.testclient import TestClient
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import app.main as main_module
 from app.core.auth import get_current_user

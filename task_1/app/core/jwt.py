@@ -1,44 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException, Header, status
-from typing import Optional
-from sqlalchemy.orm import Session
-from app.core.db import SessionLocal, engine, get_db #Base - а зачем это?
-from app.models.users import User
-from app.core.security import create_access_token, hash_password, verify_password, decode_access_token
-from pydantic import BaseModel
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.schemas.users import UserRegister, UserLogin
-from app.core import security
+from fastapi import Depends, FastAPI, status
 
-app = FastAPI()
+from app.core.auth import get_current_user
+from app.schemas.users import TokenResponse, UserCreate, UserLogin, UserResponse
+from app.services.users import UserService
 
-@app.post("/signup")
-def signup(user: UserRegister, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.username == user.username).first()
-    if existing: 
-        raise HTTPException(status_code=400, detail="Username already exists")
-    hashed_password = hash_password(user.password)
-    new_user=User(username=user.username, hashed_password=hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return {"username": new_user.username, "id": new_user.id}
+app = FastAPI(title="Legacy JWT API")
 
-@app.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user.username).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    access_token = create_access_token(data={"sub": db_user.username})
-    return {"access_token": access_token, "token_type": "bearer", "user": db_user}
+@app.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def signup(user: UserCreate):
+    return await UserService.register_user(user)
 
-@app.route("/protected")
-def protected_route(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    if not credentials:
-        raise HTTPException(status_code=status.HTTP_403_UNAUTHORIZED, detail="Creds missing")
-    token = credentials.credentials
-    payload = decode_access_token(token)
 
-    if not payload:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalidor expired token")
-    
-    return {"message": "Protected route accessed", "user": payload["sub"]}
+@app.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+async def login(user: UserLogin):
+    return await UserService.login_user(user)
+
+
+@app.get("/protected", status_code=status.HTTP_200_OK)
+async def protected_route(current_user: dict = Depends(get_current_user)):
+    return {"message": "Protected route accessed", "user": current_user["sub"]}

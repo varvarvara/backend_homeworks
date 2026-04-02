@@ -3,7 +3,6 @@ from app.core.security import create_access_token, hash_password, verify_passwor
 from app.repository.users import UserRepository
 from app.schemas.users import TokenResponse, UserCreate, UserLogin, UserResponse
 
-
 class UserService:
     @classmethod
     async def register_user(cls, data: UserCreate) -> UserResponse:

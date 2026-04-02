@@ -1,9 +1,9 @@
-from app.services.comments import CommentService
 from app.services.tasks import TaskService
 from app.services.users import UserService
+from app.services.comments import CommentService
 
 __all__ = (
-    CommentService,
     TaskService,
-    UserService
+    UserService,
+    CommentService
 )

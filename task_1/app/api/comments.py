@@ -1,16 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.core.auth import get_current_user
 from app.schemas.comments import CommentCreate, CommentResponse
 from app.services.comments import CommentService
 
-commentRouter = APIRouter(
-    prefix="/tasks/{task_id}/comments",
-    tags=["Comments"],
-    dependencies=[Depends(get_current_user)],
-)
+commentRouter = APIRouter(prefix="/v1/tasks/{task_id}/comments", tags=["Comments"])
 comment_service = CommentService()
-
 
 @commentRouter.post("", response_model=CommentResponse, status_code=201)
 async def create_comment(task_id: int, payload: CommentCreate):

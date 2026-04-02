@@ -5,5 +5,5 @@ from app.api.users import userRouter
 __all__ = (
     commentRouter,
     taskRouter,
-    userRouter
+    userRouter,
 )

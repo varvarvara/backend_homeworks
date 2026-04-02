@@ -1,16 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, File, UploadFile, status
 
-from app.core.auth import get_current_user
 from app.core.exceptions import TaskNotFoundException
-from app.schemas.tasks import TaskCreate, TaskResponse, TaskUpdate
+from app.schemas.tasks import TaskAvatarUploadResponse, TaskCreate, TaskResponse, TaskUpdate
 from app.services.tasks import TaskService
 
+
 task_service = TaskService()
-taskRouter = APIRouter(
-    prefix="/tasks",
-    tags=["Tasks"],
-    dependencies=[Depends(get_current_user)],
-)
+taskRouter = APIRouter(prefix="/v1/tasks", tags=["Tasks"])
+
 
 @taskRouter.get("", response_model=list[TaskResponse], status_code=200)
 async def get_tasks():
@@ -44,3 +41,13 @@ async def delete_task(task_id: int):
     if deleted is False:
         raise TaskNotFoundException(task_id)
     return
+
+
+@taskRouter.post(
+    "/{id}/upload-avatar",
+    response_model=TaskAvatarUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def upload_task_avatar(id: int, file: UploadFile = File(...)):
+    url = await task_service.upload_avatar(task_id=id, file=file)
+    return TaskAvatarUploadResponse(url=url)

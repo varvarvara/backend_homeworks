@@ -7,9 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
-if TYPE_CHECKING:
-    from app.models.comments import Comment
-    from app.models.users import User
+from app.models.comments import Comment
+from app.models.users import User
 
 class TaskPriority(str, Enum):
     low = "low"

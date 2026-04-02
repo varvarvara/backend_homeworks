@@ -1,11 +1,9 @@
 import asyncio
-
 from botocore.exceptions import ClientError, BotoCoreError
 from fastapi import HTTPException
 
 from adapters.storage.base import StorageAdapter
 import boto3
-
 
 class S3StorageAdapter(StorageAdapter):
     def __init__(

@@ -1,14 +1,8 @@
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
-
 from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
-
-if TYPE_CHECKING:
-    from app.models.tasks import Task
-
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -21,5 +15,4 @@ class Comment(Base):
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
-
-    task: Mapped["Task"] = relationship(back_populates="comments")
+    task = relationship("Task", back_populates="comments")

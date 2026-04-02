@@ -1,9 +1,7 @@
 from sqlalchemy import select
-
 from app.core.db import SessionLocal
 from app.models.comments import Comment
 from app.schemas.comments import CommentCreate, CommentResponse
-
 
 class CommentRepository:
     @classmethod

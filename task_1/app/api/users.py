@@ -3,7 +3,7 @@ from fastapi import APIRouter, status
 from app.schemas.users import UserCreate, UserLogin, UserResponse, TokenResponse
 from app.services.users import UserService
 
-userRouter = APIRouter(prefix="/auth", tags=["Auth"])
+userRouter = APIRouter(prefix="/v1/auth", tags=["Auth"])
 
 @userRouter.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate):

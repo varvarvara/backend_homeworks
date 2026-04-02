@@ -30,6 +30,7 @@ class CommentService:
         comment = await CommentRepository.find_one(task_id, comment_id)
         if comment is None:
             raise CommentNotFoundException(comment_id)
+
         return comment
 
 
