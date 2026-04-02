@@ -10,3 +10,6 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+source_api/
+_source_fastapi/
+task_1_db/
